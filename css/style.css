@@ -1,0 +1,81 @@
+body {
+    font-family: 'Alef', sans-serif;
+    text-align: center;
+    user-select: none;
+    transition: 0.5s;
+}
+
+* { 
+    user-select: none;
+    -webkit-user-select: none;
+}
+button {
+    border-radius: 5px;
+    border: none;
+    color: white;
+    background: #f44336;
+    box-shadow: 1px 2px 10px #474747;
+    cursor: pointer;
+    margin-right: 10px;
+    transition: 0.5s;
+}
+
+span {
+    display: block;
+}
+
+span.menuItem {
+    display: inline-block;
+    height: 100px;
+    margin: 0;
+}
+
+.main > button {
+    font-size: 30px;
+    margin-bottom:10px;
+}
+
+button:hover {
+  background-color: darkred;
+}
+.secondary > button {
+    background: midnightblue;
+    font-size: 12px;
+}
+
+article {
+    display: inline-block;
+    padding: 10px;
+    margin: 10px;
+    width: 200px;
+    border-radius: 10px;
+    background: whitesmoke;
+    box-shadow: 1px 2px 10px #888888;
+}
+
+article.menu {
+    width: 300px;
+}
+
+.warnDelete {
+    background: black;
+    color: white;
+}
+
+.deleted {
+    background: green;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.5s;
+    box-shadow: 1px 2px 10px #888888;
+
+}
+
+.hidden {
+    display: none;
+}
+
+[ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
+  display: none !important;
+}
