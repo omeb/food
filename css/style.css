@@ -78,3 +78,21 @@ article.menu {
 [ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
   display: none !important;
 }
+
+
+.timer {
+    background: rgba(0,0,0,0.4);
+    border-radius: 5px;
+    color: white;
+}
+
+.logout {
+    background: darkred;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+h3, h2 {
+    margin-top: 2px;
+    margin-bottom: 2px;
+}

@@ -1,10 +1,29 @@
 // declare a module
-var app = angular.module('foodApp', ["firebase", "ngSanitize", "ngCsv"]);
+var app = angular.module('foodApp', ["firebase",'ngRoute', "ngSanitize", "ngCsv"]);
+app.config(['$routeProvider', function($routeProvider){
+    $routeProvider
+    .when('/',{
+        templateUrl: './login.html' 
+    })
+    .when('/loggedIn',{
+        templateUrl: './main.html' 
+    })
+    .when('/loggedOut',{
+        templateUrl: './loggedout.html' 
+    })
+    .otherwise({redirectTo:'/'});
+}]);
 
 // app.config(['$locationProvider', function ($locationProvider){}]);
 
-app.controller('mainCtrl', ['$scope', '$firebaseObject', '$timeout','$interval', function($scope, $firebaseObject, $timeout, $interval) {
-    
+app.controller('mainCtrl', ['$rootScope', '$scope', '$firebaseObject', '$timeout', '$location', '$interval', function($rootScope, $scope, $firebaseObject, $timeout, $location, $interval) {
+    if($rootScope.usernameInput) {
+        console.log('yeah');
+        $scope.usernameInput = $rootScope.usernameInput;
+            if($location.path() === '/')
+                $location.path('loggedIn');
+    }
+
     var now = new Date();
     $scope.today = now.getDate() + '.' + (now.getMonth()+1) + '.' + now.getFullYear() + '_' + now.getHours() + '-' + now.getMinutes();
     
@@ -18,6 +37,7 @@ app.controller('mainCtrl', ['$scope', '$firebaseObject', '$timeout','$interval',
     // Handle Errors here.
     var errorCode = error.code;
     var errorMessage = error.message;
+    console.log('email authentication failed...');
     // ...
     });
 
@@ -170,6 +190,24 @@ app.controller('mainCtrl', ['$scope', '$firebaseObject', '$timeout','$interval',
             $scope.data = snapshot.val();
             $scope.$digest();
         });
+    };
+    
+    $scope.goToLogin = function () {
+        $location.path('/');
+    };
+
+    $scope.login = function () {
+        if ($scope.usernameInput && $scope.usernamePassword) {
+            console.log('entered values: ' + $scope.usernameInput + ', ' + $scope.usernamePassword);
+            $rootScope.usernameInput = $scope.usernameInput;
+            $location.path('loggedIn');
+        }
+    };
+
+    $scope.logOut = function () {
+        $rootScope.usernameInput = undefined;
+        $scope.usernameInput = undefined;
+        $location.path('/loggedOut');
     };
 
     $interval( function () {
