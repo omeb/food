@@ -1,20 +1,19 @@
 <div  ng-cloak style="max-width: 400px; margin: 0 auto;"> 
-    <span class="deleted fadeInUp" ng-click="setView('home')">
-            <h2>כניסות ויציאות  </h2>
-    </span>
-    
     <span class="timer">
-                <h3 ng-show="usernameInput" >מחובר כ{{ usernameInput }}
+                <h3 ng-show="username" ><span>{{ username }}</span>
             </h3>
-            <h3 ng-show="!usernameInput" >אינכם מחוברים למערכת</h3>
+            <h3 ng-show="!username" >אינכם מחוברים למערכת</h3>
         <h2 >
             {{ todayForDisplay }}
         </h2>
-                        <span ng-show="usernameInput" class="logout" ng-click="logOut()">התנתקות</span>
+                        <span ng-show="username" class="logout" ng-click="logOut()">התנתקות</span>
 
     </span>
+    <span class="deleted fadeInUp" ng-click="setView('home')">
+            <h2>כניסות ויציאות  </h2>
+    </span>
     <section ng-show="currentView == 'home'" class="animated fadeInUp">
-        <article class="menu" ng-show="usernameInput">
+        <article class="menu" ng-show="username">
             <h1>בחרו כניסה</h1>
             <span class="menuItem">
                 <button type="" ng-click="setView('Entrance1')">כניסה 1 <h2>
@@ -37,7 +36,7 @@
                     </h2></button>         
             </span>
         </article>
-        <article class="menu" ng-show="!usernameInput">
+        <article class="menu" ng-show="!username">
             <h1>ראשית יש להתחבר למערכת</h1>
             <span class="menuItem">
                 <button type="" ng-click="goToLogin()">מעבר להתחברות</button>         

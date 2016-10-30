@@ -96,3 +96,12 @@ h3, h2 {
     margin-top: 2px;
     margin-bottom: 2px;
 }
+
+.notShown {
+    opacity: 0;
+    transition: 1s;
+}
+
+.shown {
+    opacity: 1;
+}

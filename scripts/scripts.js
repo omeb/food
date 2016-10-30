@@ -15,14 +15,44 @@ app.config(['$routeProvider', function($routeProvider){
 }]);
 
 // app.config(['$locationProvider', function ($locationProvider){}]);
+app.factory('authService', authService);
 
-app.controller('mainCtrl', ['$rootScope', '$scope', '$firebaseObject', '$timeout', '$location', '$interval', function($rootScope, $scope, $firebaseObject, $timeout, $location, $interval) {
-    if($rootScope.usernameInput) {
-        console.log('yeah');
-        $scope.usernameInput = $rootScope.usernameInput;
-            if($location.path() === '/')
-                $location.path('loggedIn');
-    }
+authService.$inject = ['$location'];
+
+function authService($location) {
+    var self = this;
+    var factory = {};
+    factory.authToFireBase = function(username, password) {
+        self.username = username;
+        self.password = password;
+        firebase.auth().signInWithEmailAndPassword(self.username, self.password)
+        .then(function(){
+            $location.path('loggedIn');
+            return true;
+        })
+        .catch(function(error) {
+        // Handle Errors here.
+        var errorCode = error.code;
+        var errorMessage = error.message;
+        console.log('email authentication failed...');
+        return false;
+        // ...
+        });
+    };
+
+    factory.disconnectFromFireBase = function() {
+        firebase.auth().signOut().then(function() {
+        console.log('Signed Out');
+        $location.path('/loggedOut');
+        }, function(error) {
+        console.error('Sign Out Error', error);
+});
+    };
+    return factory;
+};
+
+app.controller('mainCtrl', ['$scope', '$firebaseObject', '$timeout', '$location', '$interval', 'authService', function($scope, $firebaseObject, $timeout, $location, $interval, authService) {
+    $scope.authService = authService;
 
     var now = new Date();
     $scope.today = now.getDate() + '.' + (now.getMonth()+1) + '.' + now.getFullYear() + '_' + now.getHours() + '-' + now.getMinutes();
@@ -33,22 +63,21 @@ app.controller('mainCtrl', ['$rootScope', '$scope', '$firebaseObject', '$timeout
     $scope.setView = function (view) {
         $scope.currentView = view;
     }
-    firebase.auth().signInWithEmailAndPassword('mishko.meteor@gmail.com', '123456').catch(function(error) {
-    // Handle Errors here.
-    var errorCode = error.code;
-    var errorMessage = error.message;
-    console.log('email authentication failed...');
-    // ...
-    });
-
+    $timeout(function(){
+        $scope.showEverything = true;
+    },1000);
     // get data after authentication 
     firebase.auth().onAuthStateChanged(function(user) {
         if (user) {
             // User is signed in.
             var isAnonymous = user.isAnonymous;
             var uid = user.uid;
-            console.log('user logged in with ID: ' + uid);
-        var DataRef = firebase.database().ref('/').once('value').then(function(snapshot) {
+            $scope.username = user.email;
+            console.log('user logged in with user: ' + $scope.username + ' and ID: ' + uid);
+            if($location.path() === '/');
+                $location.path('loggedIn');
+            $scope.name = $scope.username.substring(0, $scope.username.indexOf('@'));
+        var DataRef = firebase.database().ref('/user' + $scope.name).once('value').then(function(snapshot) {
             $scope.data = snapshot.val();
             if(!$scope.data) {
                  $scope.createDB();
@@ -59,6 +88,10 @@ app.controller('mainCtrl', ['$rootScope', '$scope', '$firebaseObject', '$timeout
 
         } else {
             console.log('user signed out...');
+            if($location.path() === 'loggedOut');
+            $timeout(function(){
+                $location.path('/');
+            },3000);
             // User is signed out.
         }
     });
@@ -106,7 +139,7 @@ app.controller('mainCtrl', ['$rootScope', '$scope', '$firebaseObject', '$timeout
             $scope.createDB();
 
 
-        var DataRef = firebase.database().ref('/').once('value').then(function(snapshot) {
+        var DataRef = firebase.database().ref('/user').once('value').then(function(snapshot) {
             $scope.data = snapshot.val();
             $scope.$digest();
         });
@@ -178,15 +211,15 @@ app.controller('mainCtrl', ['$rootScope', '$scope', '$firebaseObject', '$timeout
         };
 
 
-        firebase.database().ref('/entrance1/').set($scope.entrance1);
-        firebase.database().ref('/entrance2/').set($scope.entrance2);
-        firebase.database().ref('/entrance3/').set($scope.entrance3);
+        firebase.database().ref('/user'+ $scope.name + '/entrance1/').set($scope.entrance1);
+        firebase.database().ref('/user'+ $scope.name + '/entrance2/').set($scope.entrance2);
+        firebase.database().ref('/user'+ $scope.name + '/entrance3/').set($scope.entrance3);
     }
  
     $scope.commit = function (enterance) {
-        firebase.database().ref('/'+ enterance +'/').set($scope.data[enterance]);
+        firebase.database().ref('/user'+ $scope.name + '/'+ enterance +'/').set($scope.data[enterance]);
         
-         var DataRef = firebase.database().ref('/').once('value').then(function(snapshot) {
+         var DataRef = firebase.database().ref('/user' + $scope.name).once('value').then(function(snapshot) {
             $scope.data = snapshot.val();
             $scope.$digest();
         });
@@ -197,24 +230,22 @@ app.controller('mainCtrl', ['$rootScope', '$scope', '$firebaseObject', '$timeout
     };
 
     $scope.login = function () {
-        if ($scope.usernameInput && $scope.usernamePassword) {
-            console.log('entered values: ' + $scope.usernameInput + ', ' + $scope.usernamePassword);
-            $rootScope.usernameInput = $scope.usernameInput;
-            $location.path('loggedIn');
+        if ($scope.usernameInput && $scope.passwordInput) {
+            $scope.authService.authToFireBase($scope.usernameInput, $scope.passwordInput)
         }
     };
 
     $scope.logOut = function () {
-        $rootScope.usernameInput = undefined;
-        $scope.usernameInput = undefined;
-        $location.path('/loggedOut');
+        authService.username = '';
+        $scope.username = '';
+        $scope.authService.disconnectFromFireBase();
     };
 
     $interval( function () {
-        var DataRef = firebase.database().ref('/').once('value').then(function(snapshot) {
+        var DataRef = firebase.database().ref('/user' + $scope.name).once('value').then(function(snapshot) {
             $scope.data = snapshot.val();
             $scope.$digest();
         });
-    },2000) 
+    },3000) 
 
 }]);

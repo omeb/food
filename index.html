@@ -10,7 +10,7 @@
         <link href="https://fonts.googleapis.com/css?family=Alef" rel="stylesheet">
     </head>
     <body ng-cloak ng-controller="mainCtrl" >
-    <div ng-view></div>
+    <div ng-view class="notShown" ng-class="{'shown' : showEverything}"></div>
     </body>
 <script src="./scripts/firebase.js"></script>
 <script src="./node_modules/angular/angular.js"></script>
