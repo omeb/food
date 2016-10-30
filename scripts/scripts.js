@@ -35,6 +35,7 @@ function authService($location) {
         var errorCode = error.code;
         var errorMessage = error.message;
         console.log('email authentication failed...');
+        self.error = true;
         return false;
         // ...
         });
@@ -53,7 +54,7 @@ function authService($location) {
 
 app.controller('mainCtrl', ['$scope', '$firebaseObject', '$timeout', '$location', '$interval', 'authService', function($scope, $firebaseObject, $timeout, $location, $interval, authService) {
     $scope.authService = authService;
-
+    $scope.error = false;
     var now = new Date();
     $scope.today = now.getDate() + '.' + (now.getMonth()+1) + '.' + now.getFullYear() + '_' + now.getHours() + '-' + now.getMinutes();
     
@@ -230,9 +231,13 @@ app.controller('mainCtrl', ['$scope', '$firebaseObject', '$timeout', '$location'
     };
 
     $scope.login = function () {
+        $scope.error = false;
         if ($scope.usernameInput && $scope.passwordInput) {
             $scope.authService.authToFireBase($scope.usernameInput, $scope.passwordInput)
         }
+        $timeout(function(){
+            $scope.error = true;
+        },1000);
     };
 
     $scope.logOut = function () {

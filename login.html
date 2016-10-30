@@ -3,6 +3,7 @@
     <form dir="ltr" style="text-align: center">
       <input style="text-align: center" ng-model="usernameInput" type="text" title="username" placeholder="שם משתמש" />
       <input style="text-align: center" ng-model="passwordInput" type="password" title="username" placeholder="סיסמא" />
+      <h4 ng-if="error" class="wrong animated fadeIn">...שם משתמש או סיסמא לא נכונים</h4>
       <button type="submit" class="btn" ng-click="login()">כניסה</button>
     </form>
   </div><!--end log form -->

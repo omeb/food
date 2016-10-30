@@ -105,3 +105,12 @@ h3, h2 {
 .shown {
     opacity: 1;
 }
+
+.wrong {
+    margin: 1px;
+    padding: 0;
+    position: absolute;
+    bottom: 63px;
+    left: 130px;
+    color: #f44336
+}
