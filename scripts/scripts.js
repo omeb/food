@@ -237,7 +237,7 @@ app.controller('mainCtrl', ['$scope', '$firebaseObject', '$timeout', '$location'
         }
         $timeout(function(){
             $scope.error = true;
-        },1000);
+        },3000);
     };
 
     $scope.logOut = function () {
