@@ -107,10 +107,11 @@ h3, h2 {
 }
 
 .wrong {
-    margin: 1px;
+    margin: 0 auto;
     padding: 0;
     position: absolute;
     bottom: 63px;
     left: 130px;
+    font-size: 14px;
     color: #f44336
 }
