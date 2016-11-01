@@ -8,6 +8,9 @@ app.config(['$routeProvider', function($routeProvider){
     .when('/loggedIn',{
         templateUrl: './main.html' 
     })
+    .when('/admin',{
+        templateUrl: './admin.html' 
+    })
     .when('/loggedOut',{
         templateUrl: './loggedout.html' 
     })
@@ -27,7 +30,12 @@ function authService($location) {
         self.password = password;
         firebase.auth().signInWithEmailAndPassword(self.username, self.password)
         .then(function(){
-            $location.path('loggedIn');
+            if(self.username === 'admin@gmail.com') {
+                console.log('yeah');
+                $location.path('admin');    
+            } else {
+                $location.path('loggedIn');
+            }
             return true;
         })
         .catch(function(error) {
@@ -75,8 +83,13 @@ app.controller('mainCtrl', ['$scope', '$firebaseObject', '$timeout', '$location'
             var uid = user.uid;
             $scope.username = user.email;
             console.log('user logged in with user: ' + $scope.username + ' and ID: ' + uid);
-            if($location.path() === '/');
-                $location.path('loggedIn');
+            if($location.path() === '/') {
+                if ($scope.username === 'admin@gmail.com') {
+                    $location.path('admin');    
+                } else {
+                 $location.path('loggedIn');
+                }
+            }
             $scope.name = $scope.username.substring(0, $scope.username.indexOf('@'));
         var DataRef = firebase.database().ref('/user' + $scope.name).once('value').then(function(snapshot) {
             $scope.data = snapshot.val();
