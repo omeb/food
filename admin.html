@@ -14,25 +14,18 @@
     </span>
     <section ng-show="currentView == 'home'" class="animated fadeInUp">
         <article class="menu" ng-show="username">
-            <h1>בחרו כניסה</h1>
+            <h3>בחרו נתונים לייצוא לאקסל </h3>
+            <h1><button ng-csv="allInstances" csv-header="['Action', 'Timestamp', 'Date', 'Time', 'Enterance']" filename="total-{{today}}.csv">
+            <h2>{{ totalCounter }}</h2>
+            </button>סה"כ כרגע במערכת</h1>            
             <span class="menuItem">
-                <button type="" ng-click="setView('Entrance1')">כניסה 1 <h2>
-                    {{ data['entrance1'].counter }}
-                    </h2></button>         
-            </span>
-            <span class="menuItem">
-                <button type="" ng-click="setView('Entrance2')">כניסה 2 <h2>
-                    {{ data['entrance2'].counter }}
-                    </h2></button>         
-            </span>
-            <span class="menuItem">
-                <button type="" ng-click="setView('Entrance3')">כניסה 3 <h2>
-                    {{ data['entrance3'].counter }}
-                    </h2></button>         
-            </span>
-            <span class="menuItem">
-                <button type="" ng-click="setView('allEntrances')">כל הכניסות<h2>
-                    {{ data['entrance1'].counter + data['entrance2'].counter + data['entrance3'].counter }} 
+                    <button class="admin" style="min-width: 100px; margin-bottom:20px;" ng-repeat="(username, data)  in usersWithData" type="" ng-if="username!=='useradmin'" ng-csv="data.totalInstances" csv-header="['Action', 'Timestamp', 'Date', 'Time']" filename="{{username}}-{{today}}.csv"><h2>
+                    {{ username }} <br> 
+                    <h4>כניסה 1 : {{ data['entrance1'].counter }}</h4>
+                    <h4>כניסה 2 : {{ data['entrance2'].counter }}</h4>
+                    <h4>כניסה 3 : {{ data['entrance3'].counter }}</h4>
+                    <h2> סה"כ:   {{ data['entrance1'].counter + data['entrance2'].counter + data['entrance3'].counter }}
+ </h2>
                     </h2></button>         
             </span>
         </article>
@@ -43,55 +36,8 @@
             </span>
         </article>
     </section>
-
     <section>
-        <article ng-show="currentView == 'Entrance1' || currentView == 'allEntrances'" class="animated fadeInUp">
-            <h1>כניסה 1</h1>
-            <span class="main">
-                <button type="" ng-click="increase('entrance1')">כניסה</button>
-                <!--<button type="" ng-click="createDB()">נכנס</button>-->
-                <button type="" ng-click="decrease('entrance1')">יציאה</button>
-            </span>
-            <span class="secondary">
-                <button type="button" ng-csv="data.entrance1.instances" csv-header="['Action', 'Timestamp', 'Date', 'Time']" filename="Entrance1_{{today}}.csv">יצוא נתונים</button>
-                <button type="" ng-click="reset('entrance1')">איפוס מונה</button>
-            </span>
-            <span>
-                <h2>{{ data['entrance1'].counter }}</h2>             
-            </span>
-        </article>
-        
-        <article ng-show="currentView == 'Entrance2' || currentView == 'allEntrances'" class="animated fadeInUp">
-            <h1>כניסה 2</h1>
-            <span class="main">
-                <button type="" ng-click="increase('entrance2')">כניסה</button>
-                <button type="" ng-click="decrease('entrance2')">יציאה</button>
-            </span>
-            <span class="secondary">
-                <button type="button" ng-csv="data.entrance2.instances" csv-header="['Action', 'Timestamp', 'Date', 'Time']" filename="Entrance2_{{today}}.csv">יצוא נתונים</button>
-                <button type="" ng-click="reset('entrance2')">איפוס מונה</button>
-            </span>
-            <span>
-                <h2>{{ data['entrance2'].counter }}</h2>                
-            </span>
-        </article>
-        <article ng-show="currentView == 'Entrance3' || currentView == 'allEntrances'" class="animated fadeInUp">
-            <h1>כניסה 3</h1>
-            <span class="main">
-                <button type="" ng-click="increase('entrance3')">כניסה</button>
-                <button type="" ng-click="decrease('entrance3')">יציאה</button>
-            </span>
-            <span class="secondary">
-                <button type="button" ng-csv="data.entrance3.instances" csv-header="['Action', 'Timestamp', 'Date', 'Time']" filename="Entrance3_{{today}}.csv">יצוא נתונים</button>
-                <button type="" ng-click="reset('entrance3')">איפוס מונה</button>
-            </span>
-            <span>
-                <h2>{{ data['entrance3'].counter }}</h2>                
-            </span>
-        </article>
-    </section>
-    <section>
-        <article ng-show="currentView == 'allEntrances'" class="animated fadeInUp">
+        <article class="animated fadeInUp">
             <h1>בקרה</h1>
             <button ng-show="!dataDeleted" type="" ng-click="resetAll()" ng-class="{'warnDelete': warnDelete}">{{ deleteAllLabel }}</button>
             <span ng-show="dataDeleted" class="deleted">הנתונים נמחקו בהצלחה</span>

@@ -63,6 +63,7 @@ function authService($location) {
 app.controller('mainCtrl', ['$scope', '$firebaseObject', '$timeout', '$location', '$interval', 'authService', function($scope, $firebaseObject, $timeout, $location, $interval, authService) {
     $scope.authService = authService;
     $scope.error = false;
+    
     var now = new Date();
     $scope.today = now.getDate() + '.' + (now.getMonth()+1) + '.' + now.getFullYear() + '_' + now.getHours() + '-' + now.getMinutes();
     
@@ -72,6 +73,10 @@ app.controller('mainCtrl', ['$scope', '$firebaseObject', '$timeout', '$location'
     $scope.setView = function (view) {
         $scope.currentView = view;
     }
+
+    $scope.setViewandUser = function (user, view) {
+        $scope.username = user;
+    };
     $timeout(function(){
         $scope.showEverything = true;
     },1000);
@@ -93,7 +98,7 @@ app.controller('mainCtrl', ['$scope', '$firebaseObject', '$timeout', '$location'
             $scope.name = $scope.username.substring(0, $scope.username.indexOf('@'));
         var DataRef = firebase.database().ref('/user' + $scope.name).once('value').then(function(snapshot) {
             $scope.data = snapshot.val();
-            if(!$scope.data) {
+            if(!$scope.data && $scope.name!=='admin') {
                  $scope.createDB();
                  $scope.data = snapshot.val();
             }
@@ -136,7 +141,7 @@ app.controller('mainCtrl', ['$scope', '$firebaseObject', '$timeout', '$location'
 
 
     $scope.decrease = function(enterance) {
-        if($scope.data[enterance].counter > 1) {
+        if($scope.data[enterance].counter > 0) {
             $scope.data[enterance].counter--;
         }
         $scope.updateData(enterance, 'Left');
@@ -151,7 +156,7 @@ app.controller('mainCtrl', ['$scope', '$firebaseObject', '$timeout', '$location'
 
         if ($scope.deleteAllLabel == 'לחצו שוב לאישור מחיקה') {
             $scope.createDB();
-
+console.log('here?');
 
         var DataRef = firebase.database().ref('/user').once('value').then(function(snapshot) {
             $scope.data = snapshot.val();
@@ -203,7 +208,6 @@ app.controller('mainCtrl', ['$scope', '$firebaseObject', '$timeout', '$location'
     }
 
      $scope.createDB = function () {
-
         $scope.entrance1 = {
             id: 'entrance1',
             name: 'כניסה 1',
@@ -224,10 +228,18 @@ app.controller('mainCtrl', ['$scope', '$firebaseObject', '$timeout', '$location'
             instances: []
         };
 
-
-        firebase.database().ref('/user'+ $scope.name + '/entrance1/').set($scope.entrance1);
-        firebase.database().ref('/user'+ $scope.name + '/entrance2/').set($scope.entrance2);
-        firebase.database().ref('/user'+ $scope.name + '/entrance3/').set($scope.entrance3);
+        if($scope.name !== 'admin') {
+                firebase.database().ref('/user'+ $scope.name + '/entrance1/').set($scope.entrance1);
+                firebase.database().ref('/user'+ $scope.name + '/entrance2/').set($scope.entrance2);
+                firebase.database().ref('/user'+ $scope.name + '/entrance3/').set($scope.entrance3);
+        } else {
+            for(var user = 1; user < 6; user++) {
+                firebase.database().ref('/user'+ user + '/entrance1/').set($scope.entrance1);
+                firebase.database().ref('/user'+ user + '/entrance2/').set($scope.entrance2);
+                firebase.database().ref('/user'+ user + '/entrance3/').set($scope.entrance3);
+            }
+            // firebase.database().ref('/').set({});    
+        }
     }
  
     $scope.commit = function (enterance) {
@@ -259,11 +271,39 @@ app.controller('mainCtrl', ['$scope', '$firebaseObject', '$timeout', '$location'
         $scope.authService.disconnectFromFireBase();
     };
 
+    // Read data from server every 3 seconds
     $interval( function () {
-        var DataRef = firebase.database().ref('/user' + $scope.name).once('value').then(function(snapshot) {
-            $scope.data = snapshot.val();
-            $scope.$digest();
-        });
+        if ($scope.name === 'admin') {
+            firebase.database().ref('/').once('value').then(function(snapshot) {
+                $scope.usersWithData = snapshot.val()
+                $scope.allInstances = [];
+                var totalCounter = 0;
+
+                for (var data in $scope.usersWithData) {
+                    if ($scope.usersWithData.hasOwnProperty(data) && data!=='useradmin') {
+                        $scope.usersWithData[data].totalInstances = [];
+                        for (var userEnterance in $scope.usersWithData[data]) {
+                            if ($scope.usersWithData[data][userEnterance].instances != undefined) {
+                                $scope.usersWithData[data].totalInstances = $scope.usersWithData[data].totalInstances.concat($scope.usersWithData[data][userEnterance].instances); 
+                                $scope.allInstances = $scope.allInstances.concat($scope.usersWithData[data][userEnterance].instances);
+                                $scope.usersWithData[data][userEnterance].instances.forEach(function(record){
+                                    record.entrance = userEnterance;
+                                });
+                        }
+                        }
+                        totalCounter += $scope.usersWithData[data].entrance1.counter + $scope.usersWithData[data].entrance2.counter + $scope.usersWithData[data].entrance3.counter;
+                    }
+                };
+                $scope.totalCounter = totalCounter;
+            })
+        } else {
+            var DataRef = firebase.database().ref('/user' + $scope.name).once('value').then(function(snapshot) {
+                $scope.data = snapshot.val();
+                $scope.$digest();
+            });
+        }
     },3000) 
+
+
 
 }]);
