@@ -1,4 +1,4 @@
-<div  ng-cloak style="max-width: 400px; margin: 0 auto;"> 
+<div  ng-cloak style="width: 300px; margin: 0 auto;"> 
     <span class="timer">
                 <h3 ng-show="username" ><span>{{ username }} (מנהל)</span>
             </h3>
@@ -19,7 +19,7 @@
             <h2>{{ totalCounter }}</h2>
             </button>סה"כ כרגע במערכת</h1>            
             <span class="menuItem">
-                    <button class="admin" style="min-width: 100px; margin-bottom:20px;" ng-repeat="(username, data)  in usersWithData" type="" ng-if="username!=='useradmin'" ng-csv="data.totalInstances" csv-header="['Action', 'Timestamp', 'Date', 'Time']" filename="{{username}}-{{today}}.csv"><h2>
+                    <button class="admin" style="min-width: 100px; margin-bottom:20px;" ng-repeat="(username, data)  in usersWithData" type="" ng-if="username!=='useradmin'" ng-csv="data.totalInstances" csv-header="['Action', 'Timestamp', 'Date', 'Time', 'Enterance']" filename="{{username}}-{{today}}.csv"><h2>
                     {{ username }} <br> 
                     <h4>כניסה 1 : {{ data['entrance1'].counter }}</h4>
                     <h4>כניסה 2 : {{ data['entrance2'].counter }}</h4>

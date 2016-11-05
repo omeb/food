@@ -87,7 +87,7 @@ app.controller('mainCtrl', ['$scope', '$firebaseObject', '$timeout', '$location'
             var isAnonymous = user.isAnonymous;
             var uid = user.uid;
             $scope.username = user.email;
-            console.log('user logged in with user: ' + $scope.username + ' and ID: ' + uid);
+            // console.log('user logged in with user: ' + $scope.username + ' and ID: ' + uid);
             if($location.path() === '/') {
                 if ($scope.username === 'admin@gmail.com') {
                     $location.path('admin');    
@@ -156,7 +156,6 @@ app.controller('mainCtrl', ['$scope', '$firebaseObject', '$timeout', '$location'
 
         if ($scope.deleteAllLabel == 'לחצו שוב לאישור מחיקה') {
             $scope.createDB();
-console.log('here?');
 
         var DataRef = firebase.database().ref('/user').once('value').then(function(snapshot) {
             $scope.data = snapshot.val();
